@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DONACIÓN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Estilos para el botón de donación */
+        .boton-DONACIÓN {
+            background-color: green;
+            border: none;
+            color: white;
+            padding: 20px 40px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .boton-donación:hover {
+            background-color: #45a049;
+        }
+
+        /* Estilos para el modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Estilos para los campos del formulario */
+        input[type=text], input[type=email], select {
+            width: 100%;
+            padding: 12px;
+            margin: 6px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type=submit] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        input[type=submit]:hover {
+            background-color: #45a049;
+        }
+
+        /* Estilos para los iconos */
+        .icono {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Botón de donación -->
+<button class="boton-donación" onclick="mostrarModal()">DONACIÓN</button>
+
+<!-- Modal -->
+<div id="myModal" class="modal">
+
+    <!-- Contenido del modal -->
+    <div class="modal-content">
+        <span class="close" onclick="cerrarModal()">&times;</span>
+        <h2>Formas de Pago</h2>
+        <form id="paymentForm" onsubmit="return validarFormulario()">
+            <label for="formaPago">Selecciona una forma de pago:</label>
+            <select id="formaPago" name="formaPago">
+                <option value="tarjeta">Tarjeta de crédito</option>
+                <option value="paypal">PayPal</option>
+                <option value="transferencia">Transferencia bancaria</option>
+            </select>
+
+            <!-- Campos de datos según la forma de pago seleccionada -->
+            <div id="datosTarjeta" style="display: none;">
+                <label for="numeroTarjeta"><i class="fas fa-credit-card icono"></i>Número de Tarjeta:</label>
+                <input type="text" id="numeroTarjeta" name="numeroTarjeta" placeholder="Ingrese el número de tarjeta">
+
+                <label for="nombreTitular"><i class="fas fa-user icono"></i>Nombre del Titular:</label>
+                <input type="text" id="nombreTitular" name="nombreTitular" placeholder="Nombre en la tarjeta">
+
+                <label for="fechaExpiracion"><i class="far fa-calendar-alt icono"></i>Fecha de Expiración:</label>
+                <input type="text" id="fechaExpiracion" name="fechaExpiracion" placeholder="MM/AA">
+
+                <label for="codigoSeguridad"><i class="fas fa-lock icono"></i>Código de Seguridad:</label>
+                <input type="text" id="codigoSeguridad" name="codigoSeguridad" placeholder="CVC">
+            </div>
+
+            <div id="datosPayPal" style="display: none;">
+                <label for="correoPayPal"><i class="fab fa-paypal icono"></i>Correo Electrónico PayPal:</label>
+                <input type="email" id="correoPayPal" name="correoPayPal" placeholder="Ingrese su correo de PayPal">
+            </div>
+
+            <div id="datosTransferencia" style="display: none;">
+                <label for="numeroCuenta"><i class="fas fa-university icono"></i>Número de Cuenta:</label>
+                <input type="text" id="numeroCuenta" name="numeroCuenta" placeholder="Ingrese el número de cuenta">
+            </div>
+
+            <input type="submit" value="Pagar">
+        </form>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+
+<script>
+    // Mostrar modal
+    function mostrarModal() {
+        var modal = document.getElementById('myModal');
+        modal.style.display = 'block';
+    }
+
+    // Cerrar modal
+    function cerrarModal() {
+        var modal = document.getElementById('myModal');
+        modal.style.display = 'none';
+    }
+
+    // Mostrar campos de acuerdo a la forma de pago seleccionada
+    document.getElementById('formaPago').addEventListener('change', function() {
+        var formaPago = this.value;
+        var campos = document.querySelectorAll('#datosTarjeta, #datosPayPal, #datosTransferencia');
+
+        campos.forEach(function(campo) {
+            campo.style.display = 'none';
+        });
+
+        if (formaPago === 'tarjeta') {
+            document.getElementById('datosTarjeta').style.display = 'block';
+        } else if (formaPago === 'paypal') {
+            document.getElementById('datosPayPal').style.display = 'block';
+        } else if (formaPago === 'transferencia') {
+            document.getElementById('datosTransferencia').style.display = 'block';
+        }
+    });
+
+    // Validar formulario antes de enviar
+    function validarFormulario() {
+        var formaPago = document.getElementById('formaPago').value;
+
+        if (formaPago === 'tarjeta') {
+            var numeroTarjeta = document.getElementById('numeroTarjeta').value;
+            var nombreTitular = document.getElementById('nombreTitular').value;
+            var fechaExpiracion = document.getElementById('fechaExpiracion').value;
+            var codigoSeguridad = document.getElementById('codigoSeguridad').value;
+
+            if (numeroTarjeta.trim() === '' || nombreTitular.trim() === '' || fechaExpiracion.trim() === '' || codigoSeguridad.trim() === '') {
+                alert('Por favor, complete todos los campos.');
+                return false;
+            }
+        } else if (formaPago === 'paypal') {
+            var correoPayPal = document.getElementById('correoPayPal').value;
+
+            if (correoPayPal.trim() === '') {
+                alert('Por favor, ingrese su correo electrónico de PayPal.');
+                return false;
+            }
+        } else if (formaPago === 'transferencia') {
+            var numeroCuenta = document.getElementById('numeroCuenta').value;
+
+            if (numeroCuenta.trim() === '') {
+                alert('Por favor, ingrese el número de cuenta para la transferencia.');
+                return false;
+            }
+        }
+
+        alert('¡Pago realizado con éxito!');
+        cerrarModal();
+        return false;
+    }
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
